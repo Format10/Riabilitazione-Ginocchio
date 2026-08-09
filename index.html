@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Riabilitazione">
+    <title>🦵 Riabilitazione Ginocchio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: background 0.5s ease;
+            margin: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        body.phase-exercise {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+        }
+
+        body.phase-recovery {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+
+        body.phase-pause {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        body.flash {
+            animation: flash 0.3s ease-in-out;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .exercise-card {
+            background: linear-gradient(135deg, #dbeafe 0%, #e9d5ff 100%);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .exercise-card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .exercise-card p {
+            text-align: center;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .timer-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .timer-background {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 6;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke 0.3s ease, stroke-dashoffset 0.1s linear;
+        }
+
+        .timer-wrapper.exercise .timer-progress {
+            stroke: #ef4444;
+        }
+
+        .timer-wrapper.recovery .timer-progress {
+            stroke: #3b82f6;
+        }
+
+        .timer-wrapper.pause .timer-progress {
+            stroke: #10b981;
+        }
+
+        .timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .timer-display {
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .timer-display.exercise {
+            transform: scale(1.05);
+        }
+
+        .timer-display.recovery {
+        }
+
+        .timer-display.pause {
+        }
+
+        .timer-time {
+            font-size: 3.75rem;
+            font-weight: 700;
+            color: #111827;
+            font-family: 'Courier New', monospace;
+            line-height: 1;
+        }
+
+        .timer-label {
+            color: #374151;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .motivation {
+            background-color: #fef08a;
+            border-left: 4px solid #eab308;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            animation: bounce 0.6s infinite;
+        }
+
+        .motivation p {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #78350f;
+        }
+
+        .motivation.go-message {
+            background-color: #fbbf24;
+            border-left: 4px solid #f59e0b;
+            animation: pulse-go 0.4s ease-in-out;
+        }
+
+        .motivation.go-message p {
+            font-size: 3rem;
+            color: #b45309;
+        }
+
+        @keyframes pulse-go {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-item {
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .progress-item-label {
+            color: #4b5563;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-item-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .progress-item:nth-child(2) .progress-item-value {
+            color: #2563eb;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        button {
+            flex: 1;
+            font-weight: 700;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            touch-action: manipulation; /* Previene zoom accidentale su mobile */
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #22c55e 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-play:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .btn-play:active {
+            transform: scale(0.98);
+        }
+
+        .btn-reset {
+            background-color: #9ca3af;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #6b7280;
+            transform: scale(1.05);
+        }
+
+        .btn-reset:active {
+            transform: scale(0.98);
+        }
+
+        .btn-skip {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-skip:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .btn-skip:active {
+            transform: scale(0.98);
+        }
+
+        .btn-next {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-next:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .btn-next:active {
+            transform: scale(0.98);
+        }
+
+        .serie-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-prev, .btn-next {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            height: 3rem;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .btn-prev:hover, .btn-next:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .btn-prev:active, .btn-next:active {
+            transform: scale(0.98);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #2563eb 0%, #a855f7 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer p {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .footer-credit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-logo {
+            height: 32px;
+            width: auto;
+            min-width: 100px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: filter 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Icons inline */
+        .icon {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦵 Riabilitazione Ginocchio</h1>
+            <p>Sessione di recupero personalizzata</p>
+        </div>
+
+        <!-- Exercise Card -->
+        <div class="exercise-card">
+            <h2 id="exerciseName">Esercizio 1: Estensione Punta e Gamba</h2>
+            <p id="exerciseDescription">Estendi la punta</p>
+        </div>
+
+        <!-- Timer Display Circolare -->
+        <div class="timer-wrapper" id="timerDisplay">
+            <svg viewBox="0 0 100 100" class="timer-svg">
+                <circle class="timer-background" cx="50" cy="50" r="45"></circle>
+                <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
+            </svg>
+            <div class="timer-content">
+                <div class="timer-time" id="timerTime">0:20</div>
+                <div class="timer-label" id="timerLabel">🔥 ESERCIZIO</div>
+            </div>
+        </div>
+
+        <!-- Serie Navigation Buttons -->
+        <div class="serie-controls">
+            <button class="btn-prev" onclick="skipToPreviousSerie()" title="Torna alla serie precedente">
+                ⏮️ Indietro
+            </button>
+            <button class="btn-next" onclick="skipToNextSerie()" title="Vai alla prossima serie">
+                ⏭️ Avanti
+            </button>
+        </div>
+
+        <!-- Motivation Message -->
+        <div class="motivation hidden" id="motivationBox">
+            <p id="motivationText">🔥 Bellissimo! Continua così!</p>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-grid">
+            <div class="progress-item">
+                <div class="progress-item-label">SERIE</div>
+                <div class="progress-item-value"><span id="currentRep">1</span>/<span id="maxRep">13</span></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-item-label">ESERCIZIO</div>
+                <div class="progress-item-value"><span id="currentExercise">1</span>/3</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-play" id="playBtn" onclick="toggleTimer()">
+                <span id="playIcon">▶️</span>
+                <span id="playText">Start</span>
+            </button>
+            <button class="btn-skip" onclick="skipToNextExercise()" title="Vai all'esercizio successivo">
+                <span>⏭️</span>
+                <span>Skip</span>
+            </button>
+            <button class="btn-reset" onclick="resetSession()">
+                <span>🔄</span>
+                <span>Reset</span>
+            </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+        </div>
+        <p class="progress-text">Progresso complessivo</p>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>✨ Ricorda: il tuo ginocchio è in buone mani (le tue!)</p>
+            <div class="footer-credit">
+                <span style="font-size: 0.75rem; color: #d1d5db;">Creation by</span>
+                <img src="loggo_piccolo.png" alt="FormatSystem" class="footer-logo" id="footerLogo" onerror="showTextFallback()">
+                <span id="logoFallback" style="font-size: 0.75rem; color: #d1d5db; display: none;">FormatSystem</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const exercises = [
+            {
+                id: 1,
+                name: 'Estensione Punta e Gamba',
+                phases: [
+                    { type: 'esercizio', duration: 20, description: 'Estendi la punta' },
+                    { type: 'recupero', duration: 10 },
+                    { type: 'esercizio', duration: 20, description: 'Tocca la punta con le braccia' },
+                    { type: 'recupero', duration: 10 }
+                ],
+                reps: 13
+            },
+            {
+                id: 2,
+                name: 'Gambe Lunghe e Toccarsi le Punte',
+                phases: [
+                    { type: 'esercizio', duration: 20, description: 'Tocca le punte' },
+                    { type: 'recupero', duration: 10 }
+                ],
+                reps: 13
+            },
+            {
+                id: 3,
+                name: 'Piegare la Gamba',
+                phases: [
+                    { type: 'esercizio', duration: 30, description: 'Piega la gamba' },
+                    { type: 'recupero', duration: 10 }
+                ],
+                reps: 5
+            }
+        ];
+
+        const motivationalMessages = [
+            '🔥 Awesome! Keep going!',
+            '💪 Great strength! Your knee thanks you!',
+            '⚡ Fantastic! You\'re a machine!',
+            '🎯 Perfect! Nothing stops you!',
+            '🚀 Incredible! You\'re dominating!',
+            '✨ Amazing! You\'re impressed with yourself!',
+            '🏆 Champion! Keep it up!',
+            '💥 Demolish these exercises!',
+            '🌟 You\'re a hero! Continue!',
+            '🎉 Spectacular! What progress!',
+            '⭐ Rehab genius!',
+            '🔝 Top notch! Perfect!',
+        ];
+
+        // State
+        let currentExercise = 0;
+        let currentRep = 1;
+        let currentPhaseIndex = 0;
+        let timeLeft = 20;
+        let isRunning = false;
+        let showPause = false;
+        let pausePhase = 0;
+        let timerInterval = null;
+        let lastPhaseShowedGo = -1; // Traccia quale fase ha mostrato "Go"
+        let sessionComplete = false; // Flag per bloccare la sessione
+        let lastExerciseWhenTimerStarted = -1; // Traccia quale esercizio era quando il timer è partito
+        let justLeftPause = false; // Flag per bloccare l'avvio automatico dopo la pausa
+
+        // Logo Fallback Function
+        function showTextFallback() {
+            document.getElementById('footerLogo').style.display = 'none';
+            document.getElementById('logoFallback').style.display = 'inline';
+        }
+
+        // Initialize
+        function init() {
+            updateDisplay();
+            updateBackgroundColor();
+            // Prevent screen from sleeping
+            keepScreenAwake();
+        }
+
+        // Keep Screen Awake
+        let wakeLock = null;
+
+        function keepScreenAwake() {
+            if (navigator.wakeLock) {
+                navigator.wakeLock.request('screen')
+                    .then(lock => {
+                        wakeLock = lock;
+                        console.log('✅ Screen wake lock acquired');
+                        
+                        // Rinova il lock ogni 30 secondi per sicurezza
+                        setInterval(() => {
+                            if (isRunning && wakeLock) {
+                                navigator.wakeLock.request('screen')
+                                    .then(lock => {
+                                        wakeLock = lock;
+                                    })
+                                    .catch(err => console.log('Wake lock renewal failed:', err));
+                            }
+                        }, 30000);
+                    })
+                    .catch(err => {
+                        console.log('Wake lock error:', err);
+                        // Fallback: attiva la luminosità schermo
+                        activateScreenFallback();
+                    });
+            } else {
+                // Se Wake Lock non supportato, usa fallback
+                activateScreenFallback();
+            }
+        }
+
+        // Fallback per mantenere schermo acceso
+        function activateScreenFallback() {
+            // Impedisce lo screen lock via CSS
+            document.body.style.webkitUserSelect = 'none';
+            console.log('📱 Using screen fallback method');
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Toggle Timer
+        function toggleTimer() {
+            // Blocca il timer se la sessione è completata
+            if (sessionComplete) {
+                return;
+            }
+
+            isRunning = !isRunning;
+            updatePlayButton();
+            if (isRunning) {
+                // Mostra "Go" solo al primo avvio
+                if (currentExercise === 0 && currentRep === 1 && currentPhaseIndex === 0) {
+                    showGo();
+                    lastExerciseWhenTimerStarted = 0;
+                }
+                startTimer();
+            } else {
+                stopTimer();
+            }
+        }
+
+        // Start Timer
+        function startTimer() {
+            // Mostra "Go" se l'esercizio è cambiato da quando il timer è partito
+            if (!showPause && currentExercise !== lastExerciseWhenTimerStarted) {
+                showGo();
+                lastExerciseWhenTimerStarted = currentExercise;
+            }
+
+            // Blocca il timer se la sessione è completata
+            if (sessionComplete) {
+                isRunning = false;
+                updatePlayButton();
+                return;
+            }
+
+            // Mantieni lo schermo acceso durante il timer
+            keepScreenAwake();
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft === 0) {
+                    clearInterval(timerInterval);
+                    handlePhaseComplete();
+                    // Riparti automaticamente SOLO se non siamo appena usciti da una pausa
+                    setTimeout(() => {
+                        if (currentExercise < exercises.length && !sessionComplete && !justLeftPause) {
+                            isRunning = true;
+                            updatePlayButton();
+                            startTimer();
+                        } else if (justLeftPause) {
+                            // Se siamo appena usciti dalla pausa, ferma il timer e attendi il click di Play
+                            isRunning = false;
+                            updatePlayButton();
+                            justLeftPause = false; // Reset flag
+                        }
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        // Stop Timer
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        // Update Background Color Based on Phase (temporary, 2.5 seconds)
+        function updateBackgroundColor() {
+            const body = document.body;
+            body.classList.remove('phase-exercise', 'phase-recovery', 'phase-pause');
+            
+            if (showPause) {
+                body.classList.add('phase-pause');
+            } else {
+                const exercise = exercises[currentExercise];
+                const currentPhase = exercise.phases[currentPhaseIndex];
+                if (currentPhase.type === 'esercizio') {
+                    body.classList.add('phase-exercise');
+                } else {
+                    body.classList.add('phase-recovery');
+                }
+            }
+            
+            // Rimuovi il colore dopo 2.5 secondi
+            setTimeout(() => {
+                body.classList.remove('phase-exercise', 'phase-recovery', 'phase-pause');
+            }, 2500);
+        }
+
+        // Flash Screen on Phase Change
+        function flashScreen() {
+            const body = document.body;
+            body.classList.remove('flash');
+            // Trigger reflow to restart animation
+            void body.offsetWidth;
+            body.classList.add('flash');
+        }
+        function playSound(frequency = 800, duration = 300) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        // Speak Motivation (Text-to-Speech)
+        function speakMotivation(text) {
+            try {
+                // Cancel any previous speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // English - funziona con sistema in English
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.log('Speech not available');
+            }
+        }
+
+        // Handle Phase Complete
+        function handlePhaseComplete() {
+            playSound(800, 300); // Beep quando finisce una fase
+            flashScreen(); // Lampeggia lo schermo
+            
+            const exercise = exercises[currentExercise];
+
+            if (showPause) {
+                // Non mostrare niente durante la pausa
+                if (pausePhase === 0) {
+                    // Se è l'ultimo esercizio, salta i 90 secondi e finisci
+                    if (currentExercise === exercises.length - 1) {
+                        completeSession();
+                        return;
+                    } else {
+                        // Altrimenti vai ai 90 secondi
+                        pausePhase = 1;
+                        timeLeft = 90;
+                    }
+                } else {
+                    showPause = false;
+                    pausePhase = 0;
+                    justLeftPause = true; // Flag per evitare riavvio automatico
+                    currentExercise++;
+                    
+                    if (currentExercise < exercises.length) {
+                        currentRep = 1;
+                        currentPhaseIndex = 0;
+                        timeLeft = exercises[currentExercise].phases[0].duration;
+                        lastPhaseShowedGo = -1; // Reset per il nuovo esercizio
+                    } else {
+                        completeSession();
+                        return;
+                    }
+                }
+            } else {
+                const currentPhase = exercise.phases[currentPhaseIndex];
+                
+                if (currentPhase.type === 'esercizio') {
+                    const nextPhaseIndex = currentPhaseIndex + 1;
+                    if (nextPhaseIndex < exercise.phases.length) {
+                        currentPhaseIndex = nextPhaseIndex;
+                        timeLeft = exercise.phases[nextPhaseIndex].duration;
+                        // Mostra "Go" se è una fase esercizio
+                        if (exercise.phases[nextPhaseIndex].type === 'esercizio' && nextPhaseIndex !== lastPhaseShowedGo) {
+                            showGo();
+                            lastPhaseShowedGo = nextPhaseIndex;
+                        }
+                    } else {
+                        if (currentRep < exercise.reps) {
+                            currentRep++;
+                            currentPhaseIndex = 0;
+                            timeLeft = exercise.phases[0].duration;
+                            // Mostra "Go" per la nuova serie
+                            showGo();
+                            lastPhaseShowedGo = 0;
+                        } else {
+                            // Fine esercizio intero - mostra motivazionale
+                            const motivation = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+                            showMotivation(motivation);
+                            const textToSpeak = motivation.replace(/[^\w\s]/gi, '').trim();
+                            setTimeout(() => {
+                                speakMotivation(textToSpeak);
+                            }, 300);
+                            goToPausePhase();
+                            return;
+                        }
+                    }
+                } else {
+                    const nextPhaseIndex = currentPhaseIndex + 1;
+                    if (nextPhaseIndex < exercise.phases.length) {
+                        currentPhaseIndex = nextPhaseIndex;
+                        timeLeft = exercise.phases[nextPhaseIndex].duration;
+                        // Mostra "Go" se è una fase esercizio
+                        if (exercise.phases[nextPhaseIndex].type === 'esercizio' && nextPhaseIndex !== lastPhaseShowedGo) {
+                            showGo();
+                            lastPhaseShowedGo = nextPhaseIndex;
+                        }
+                    } else {
+                        if (currentRep < exercise.reps) {
+                            currentRep++;
+                            currentPhaseIndex = 0;
+                            timeLeft = exercise.phases[0].duration;
+                            // Mostra "Go" per la nuova serie
+                            showGo();
+                            lastPhaseShowedGo = 0;
+                        } else {
+                            // Fine esercizio intero - mostra motivazionale
+                            const motivation = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+                            showMotivation(motivation);
+                            const textToSpeak = motivation.replace(/[^\w\s]/gi, '').trim();
+                            setTimeout(() => {
+                                speakMotivation(textToSpeak);
+                            }, 300);
+                            goToPausePhase();
+                            return;
+                        }
+                    }
+                }
+            }
+
+            updateDisplay();
+        }
+
+        // Skip to Next Exercise
+        // Skip to Previous Serie (Indietro button)
+        function skipToPreviousSerie() {
+            if (sessionComplete) {
+                return;
+            }
+
+            stopTimer();
+            isRunning = false;
+            updatePlayButton();
+            
+            const exercise = exercises[currentExercise];
+            
+            // Se siamo in pausa
+            if (showPause) {
+                if (pausePhase === 1) {
+                    // Se siamo nella pausa di 90 sec, torna a quella di 30 sec
+                    pausePhase = 0;
+                    timeLeft = 30;
+                    updateDisplay();
+                } else if (pausePhase === 0) {
+                    // Se siamo nella pausa di 30 sec, torna all'ultima serie
+                    if (currentExercise === exercises.length - 1) {
+                        // Se è l'ultimo esercizio, torna all'ultima serie dello STESSO esercizio
+                        showPause = false;
+                        pausePhase = 0;
+                        justLeftPause = false;
+                        currentRep = exercise.reps;
+                        currentPhaseIndex = 0;
+                        timeLeft = exercise.phases[0].duration;
+                        lastPhaseShowedGo = -1;
+                        updateDisplay();
+                        document.getElementById('motivationBox').classList.add('hidden');
+                    } else if (currentExercise > 0) {
+                        // Se non è il primo esercizio, torna all'ultima serie dell'esercizio precedente
+                        showPause = false;
+                        pausePhase = 0;
+                        justLeftPause = false;
+                        currentExercise--;
+                        currentRep = exercises[currentExercise].reps;
+                        currentPhaseIndex = 0;
+                        timeLeft = exercises[currentExercise].phases[0].duration;
+                        lastPhaseShowedGo = -1;
+                        updateDisplay();
+                        document.getElementById('motivationBox').classList.add('hidden');
+                    } else {
+                        // Se è il primo esercizio, torna all'ultima serie dello stesso esercizio
+                        showPause = false;
+                        pausePhase = 0;
+                        justLeftPause = false;
+                        currentRep = exercise.reps;
+                        currentPhaseIndex = 0;
+                        timeLeft = exercise.phases[0].duration;
+                        lastPhaseShowedGo = -1;
+                        updateDisplay();
+                        document.getElementById('motivationBox').classList.add('hidden');
+                    }
+                }
+            } else if (!showPause && currentRep > 1) {
+                // Se non siamo in pausa e ci sono serie precedenti
+                currentRep--;
+                currentPhaseIndex = 0;
+                timeLeft = exercise.phases[0].duration;
+                lastPhaseShowedGo = -1;
+                updateDisplay();
+                document.getElementById('motivationBox').classList.add('hidden');
+            }
+        }
+
+        // Skip to Next Serie (Avanti button)
+        function skipToNextSerie() {
+            if (sessionComplete) {
+                return;
+            }
+
+            stopTimer();
+            isRunning = false;
+            updatePlayButton();
+            
+            const exercise = exercises[currentExercise];
+            
+            // Se siamo in pausa
+            if (showPause) {
+                if (pausePhase === 0) {
+                    // Se è l'ultimo esercizio, finisci direttamente
+                    if (currentExercise === exercises.length - 1) {
+                        completeSession();
+                    } else {
+                        // Altrimenti vai alla seconda fase (90 sec)
+                        pausePhase = 1;
+                        timeLeft = 90;
+                        updateDisplay();
+                    }
+                } else if (pausePhase === 1) {
+                    // Secondo fase pausa (90 sec) → vai al prossimo esercizio
+                    if (currentExercise < exercises.length - 1) {
+                        showPause = false;
+                        pausePhase = 0;
+                        currentExercise++;
+                        currentRep = 1;
+                        currentPhaseIndex = 0;
+                        timeLeft = exercises[currentExercise].phases[0].duration;
+                        lastPhaseShowedGo = -1;
+                        updateDisplay();
+                        document.getElementById('motivationBox').classList.add('hidden');
+                    } else {
+                        // Se è l'ultimo esercizio, finisci la sessione
+                        completeSession();
+                    }
+                }
+            } else if (!showPause && currentRep < exercise.reps) {
+                // Se non siamo in pausa e ci sono ancora serie da fare
+                currentRep++;
+                currentPhaseIndex = 0;
+                timeLeft = exercise.phases[0].duration;
+                lastPhaseShowedGo = -1;
+                updateDisplay();
+                document.getElementById('motivationBox').classList.add('hidden');
+            } else if (!showPause && currentRep === exercise.reps) {
+                // Se è l'ultima serie, fai passare alla pausa
+                goToPausePhase();
+            }
+        }
+
+        // Skip to Next Exercise (Skip button)
+        function skipToNextExercise() {
+            if (sessionComplete) {
+                return;
+            }
+
+            stopTimer();
+            isRunning = false;
+            updatePlayButton();
+            
+            // Salta direttamente all'esercizio successivo (senza pausa)
+            if (currentExercise < exercises.length - 1) {
+                currentExercise++;
+                currentRep = 1;
+                currentPhaseIndex = 0;
+                timeLeft = exercises[currentExercise].phases[0].duration;
+                lastPhaseShowedGo = -1;
+                showPause = false;
+                pausePhase = 0;
+                updateDisplay();
+                document.getElementById('motivationBox').classList.add('hidden');
+            } else {
+                completeSession();
+            }
+        }
+        function goToPausePhase() {
+            stopTimer(); // Ferma il timer quando entra in pausa
+            isRunning = false;
+            updatePlayButton();
+            justLeftPause = false; // Reset flag quando entra in pausa
+            
+            // Mostra pausa SEMPRE, anche dopo l'ultimo esercizio
+            playSound(1200, 500); // Suono più acuto per il cambio esercizio
+            showPause = true;
+            pausePhase = 0;
+            timeLeft = 30;
+            updateDisplay();
+        }
+
+        // Complete Session
+        function completeSession() {
+            stopTimer();
+            isRunning = false;
+            sessionComplete = true; // Blocca la sessione
+            updatePlayButton();
+            
+            // Completa la barra di progresso al 100%
+            document.getElementById('progressBar').style.width = '100%';
+            
+            alert('🎊 FANTASTICO! Hai completato tutta la sessione! Il tuo ginocchio è fortunato ad averti! 🦵💪');
+        }
+
+        // Show Motivation
+        function showMotivation(message = null) {
+            const motivation = message || motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+            const motivationBox = document.getElementById('motivationBox');
+            const motivationText = document.getElementById('motivationText');
+            
+            motivationBox.classList.remove('go-message');
+            motivationText.textContent = motivation;
+            motivationBox.classList.remove('hidden');
+            
+            setTimeout(() => {
+                motivationBox.classList.add('hidden');
+            }, 3000);
+            
+            return motivation;
+        }
+
+        // Show Go Message
+        function showGo() {
+            const motivationBox = document.getElementById('motivationBox');
+            const motivationText = document.getElementById('motivationText');
+            
+            motivationBox.classList.add('go-message');
+            motivationText.textContent = '🚀 GO!';
+            motivationBox.classList.remove('hidden');
+            
+            setTimeout(() => {
+                motivationBox.classList.add('hidden');
+                motivationBox.classList.remove('go-message');
+            }, 1500);
+        }
+
+        // Update Display
+        function updateDisplay() {
+            const exercise = exercises[currentExercise];
+            
+            if (showPause) {
+                document.getElementById('exerciseName').textContent = '⏸️ PAUSA';
+                const description = pausePhase === 0 
+                    ? 'Pausa - Piega piano la gamba'
+                    : 'Pausa - Muovi la gamba per la circolazione';
+                document.getElementById('exerciseDescription').textContent = description;
+            } else {
+                document.getElementById('exerciseName').textContent = `Esercizio ${currentExercise + 1}: ${exercise.name}`;
+                const currentPhase = exercise.phases[currentPhaseIndex];
+                document.getElementById('exerciseDescription').textContent = currentPhase.description || 'Esercizio';
+            }
+
+            updateTimerDisplay();
+            updateProgressDisplay();
+            updateProgressBar();
+            updateBackgroundColor(); // Aggiorna colore sfondo
+        }
+
+        // Update Timer Display
+        function updateTimerDisplay() {
+            const exercise = exercises[currentExercise];
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerLabel = document.getElementById('timerLabel');
+            
+            document.getElementById('timerTime').textContent = formatTime(timeLeft);
+            
+            timerDisplay.classList.remove('exercise', 'recovery', 'pause');
+            
+            if (showPause) {
+                timerDisplay.classList.add('pause');
+                timerLabel.textContent = '🧘 PAUSA';
+            } else {
+                const currentPhase = exercise.phases[currentPhaseIndex];
+                if (currentPhase.type === 'esercizio') {
+                    timerDisplay.classList.add('exercise');
+                    timerLabel.textContent = '🔥 ESERCIZIO';
+                } else {
+                    timerDisplay.classList.add('recovery');
+                    timerLabel.textContent = '⏸️ RECUPERO';
+                }
+            }
+
+            // Update SVG progress circle
+            updateSVGProgress();
+        }
+
+        // Update SVG Progress Circle
+        function updateSVGProgress() {
+            const timerProgress = document.getElementById('timerProgress');
+            const exercise = exercises[currentExercise];
+            let maxTime = 0;
+
+            if (showPause) {
+                maxTime = pausePhase === 0 ? 30 : 90;
+            } else {
+                maxTime = exercise.phases[currentPhaseIndex].duration;
+            }
+
+            const circumference = 2 * Math.PI * 45;
+            const progress = Math.max(0, (timeLeft / maxTime) * circumference);
+            timerProgress.style.strokeDasharray = circumference;
+            timerProgress.style.strokeDashoffset = circumference - progress;
+        }
+
+        // Update Progress Display
+        function updateProgressDisplay() {
+            const exercise = exercises[currentExercise];
+            document.getElementById('currentRep').textContent = currentRep;
+            document.getElementById('maxRep').textContent = exercise.reps;
+            document.getElementById('currentExercise').textContent = currentExercise + 1;
+        }
+
+        // Update Progress Bar
+        function updateProgressBar() {
+            const percentage = (currentExercise / 3) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // Update Play Button
+        function updatePlayButton() {
+            const playBtn = document.getElementById('playBtn');
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
+            
+            if (isRunning) {
+                playIcon.textContent = '⏸️';
+                playText.textContent = 'Pausa';
+            } else {
+                playIcon.textContent = '▶️';
+                playText.textContent = 'Start';
+            }
+        }
+
+        // Reset Session
+        function resetSession() {
+            stopTimer();
+            currentExercise = 0;
+            currentRep = 1;
+            currentPhaseIndex = 0;
+            timeLeft = exercises[0].phases[0].duration;
+            isRunning = false;
+            showPause = false;
+            pausePhase = 0;
+            lastPhaseShowedGo = -1; // Reset tracker
+            lastExerciseWhenTimerStarted = -1; // Reset exercise tracker
+            sessionComplete = false; // Reset flag
+            justLeftPause = false; // Reset pause flag
+            updateDisplay();
+            updatePlayButton();
+            updateBackgroundColor();
+            document.getElementById('motivationBox').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '0%'; // Reset progress bar
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
