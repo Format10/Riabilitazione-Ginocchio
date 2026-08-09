@@ -55,7 +55,10 @@
             background: white;
             border-radius: 1.5rem;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            min-height: auto;
         }
 
         .header {
@@ -410,27 +413,6 @@
             color: #9ca3af;
         }
 
-        .footer-credit {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .footer-logo {
-            height: 32px;
-            width: auto;
-            min-width: 100px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: filter 0.3s ease, transform 0.3s ease;
-        }
-
-        .footer-logo:hover {
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-            transform: scale(1.05);
-        }
-
         .hidden {
             display: none;
         }
@@ -518,11 +500,7 @@
         <!-- Footer -->
         <div class="footer">
             <p>✨ Ricorda: il tuo ginocchio è in buone mani (le tue!)</p>
-            <div class="footer-credit">
-                <span style="font-size: 0.75rem; color: #d1d5db;">Creation by</span>
-                <img src="loggo_piccolo.png" alt="FormatSystem" class="footer-logo" id="footerLogo" onerror="showTextFallback()">
-                <span id="logoFallback" style="font-size: 0.75rem; color: #d1d5db; display: none;">FormatSystem</span>
-            </div>
+            <p style="font-size: 0.65rem; margin-top: 0.5rem; color: #d1d5db;">Creation by FormatSystem</p>
         </div>
     </div>
 
@@ -663,6 +641,8 @@
                 if (currentExercise === 0 && currentRep === 1 && currentPhaseIndex === 0) {
                     showGo();
                     lastExerciseWhenTimerStarted = 0;
+                    // Suona allarme al primo avvio
+                    setTimeout(() => playAlarm('esercizio'), 100);
                 }
                 startTimer();
             } else {
@@ -676,6 +656,8 @@
             if (!showPause && currentExercise !== lastExerciseWhenTimerStarted) {
                 showGo();
                 lastExerciseWhenTimerStarted = currentExercise;
+                // Suona allarme quando inizia un nuovo esercizio
+                playAlarm('esercizio');
             }
 
             // Blocca il timer se la sessione è completata
@@ -748,6 +730,49 @@
             void body.offsetWidth;
             body.classList.add('flash');
         }
+        // Play Alarm Sound
+        function playAlarm(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                if (type === 'esercizio') {
+                    // Suono di inizio esercizio: 3 beep rapidi
+                    playBeepSound(800, 100, audioContext, 0);
+                    playBeepSound(800, 100, audioContext, 150);
+                    playBeepSound(800, 100, audioContext, 300);
+                } else if (type === 'recupero') {
+                    // Suono di recupero: 2 beep medi
+                    playBeepSound(600, 120, audioContext, 0);
+                    playBeepSound(600, 120, audioContext, 150);
+                } else if (type === 'pausa') {
+                    // Suono di pausa: 1 beep basso lungo
+                    playBeepSound(400, 200, audioContext, 0);
+                }
+            } catch (err) {
+                console.log('Alarm error:', err);
+            }
+        }
+
+        // Helper per creare beep
+        function playBeepSound(frequency, duration, audioContext, delay) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            const startTime = audioContext.currentTime + delay / 1000;
+            gainNode.gain.setValueAtTime(0.3, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration / 1000);
+            
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration / 1000);
+        }
+
+        // Play Sound
         function playSound(frequency = 800, duration = 300) {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -886,6 +911,18 @@
                             return;
                         }
                     }
+                }
+            }
+
+            // Suona allarme appropriato per la nuova fase
+            if (showPause) {
+                playAlarm('pausa');
+            } else {
+                const newPhase = exercise.phases[currentPhaseIndex];
+                if (newPhase.type === 'esercizio') {
+                    playAlarm('esercizio');
+                } else {
+                    playAlarm('recupero');
                 }
             }
 
