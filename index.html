@@ -415,6 +415,74 @@
             color: #9ca3af;
         }
 
+        .completion-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1rem;
+        }
+
+        .completion-modal.hidden {
+            display: none;
+        }
+
+        .completion-modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .completion-message {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.5;
+        }
+
+        .completion-close-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .completion-close-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.02);
+        }
+
+        .completion-close-btn:active {
+            transform: scale(0.98);
+        }
+
         .hidden {
             display: none;
         }
@@ -503,6 +571,14 @@
         <div class="footer">
             <p>✨ Ricorda: il tuo ginocchio è in buone mani (le tue!)</p>
             <p style="font-size: 0.65rem; margin-top: 0.5rem; color: #d1d5db;">Creation by FormatSystem</p>
+        </div>
+    </div>
+
+    <!-- Modal Completamento Sessione -->
+    <div id="completionModal" class="completion-modal hidden">
+        <div class="completion-modal-content">
+            <p class="completion-message">🎊 FANTASTICO! Hai completato tutta la sessione! Il tuo ginocchio è fortunato ad averti! 🦵💪</p>
+            <button onclick="closeCompletionModal()" class="completion-close-btn">Chiudi</button>
         </div>
     </div>
 
@@ -1104,7 +1180,13 @@
             // Completa la barra di progresso al 100%
             document.getElementById('progressBar').style.width = '100%';
             
-            alert('🎊 FANTASTICO! Hai completato tutta la sessione! Il tuo ginocchio è fortunato ad averti! 🦵💪');
+            // Mostra il modal di completamento
+            document.getElementById('completionModal').classList.remove('hidden');
+        }
+
+        // Chiudi il modal di completamento
+        function closeCompletionModal() {
+            document.getElementById('completionModal').classList.add('hidden');
         }
 
         // Show Motivation
