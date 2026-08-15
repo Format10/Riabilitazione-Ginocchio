@@ -417,16 +417,16 @@
 
         .completion-modal {
             position: fixed;
-            bottom: 2rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 9999;
-            animation: slideUp 0.3s ease;
-            max-width: 400px;
+            padding: 1rem;
         }
 
         .completion-modal.hidden {
@@ -434,14 +434,17 @@
         }
 
         .completion-modal-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            max-width: 350px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.3s ease;
         }
 
         @keyframes slideUp {
             from {
-                transform: translateY(20px);
+                transform: translateY(30px);
                 opacity: 0;
             }
             to {
@@ -451,27 +454,29 @@
         }
 
         .completion-message {
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             font-weight: 600;
             color: #1f2937;
-            margin: 0;
-            line-height: 1.4;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+            text-align: center;
         }
 
         .completion-close-btn {
-            align-self: flex-end;
+            display: block;
+            margin-left: auto;
             background: none;
             border: none;
             color: #2563eb;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
-            padding: 0;
+            padding: 0.5rem 0;
             text-decoration: none;
         }
 
         .completion-close-btn:active {
-            opacity: 0.8;
+            opacity: 0.7;
         }
 
         .hidden {
@@ -568,10 +573,8 @@
     <!-- Modal Completamento Sessione -->
     <div id="completionModal" class="completion-modal hidden">
         <div class="completion-modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-                <p class="completion-message">🎊 FANTASTICO! Hai completato tutta la sessione! Il tuo ginocchio è fortunato ad averti! 🦵💪</p>
-                <button onclick="closeCompletionModal()" class="completion-close-btn">Chiudi</button>
-            </div>
+            <p class="completion-message">🎊 FANTASTICO! Hai completato tutta la sessione! Il tuo ginocchio è fortunato ad averti! 🦵💪</p>
+            <button onclick="closeCompletionModal()" class="completion-close-btn">Chiudi</button>
         </div>
     </div>
 
